@@ -6,8 +6,8 @@ const defaultTitle = 'Cadastro de Clientes'
 async function list(req, res) {
     const users = await customersModel.find()
 
-    res.render('listUsers', {
-        title: 'Listagem de Usuarios',
+    res.render('list', {
+        title: 'Listagem de Usuários',
         users
     })
 }
@@ -21,7 +21,7 @@ function index(req, res) {
 async function add(req, res) {
     const {
         name,
-        age, 
+        age,
         email,
         password
     } = req.body
@@ -34,7 +34,7 @@ async function add(req, res) {
         email,
         password: passwordCrypto
     })
-    
+
     register.save()
     res.render('register', {
         title: defaultTitle,
@@ -42,7 +42,39 @@ async function add(req, res) {
     })
 }
 
-function update() {
+async function formEdit(req, res) {
+    const { id } = req.query
+
+    const user = await customersModel.findById(id)
+
+    res.render('edit', {
+        title: 'Editar Usuário',
+        user
+    })
+}
+
+async function edit(req, res) {
+    const {
+        name,
+        age,
+        email
+    } = req.body
+
+    const { id } = req.params
+
+    const user = await customersModel.findById(id)
+
+    user.name = name
+    user.age = age
+    user.email = email
+
+    user.save()
+
+    res.render('edit', {
+        title: 'Editar Usuário',
+        user,
+        message: 'Usuário alterado com sucesso!' 
+    })
 
 }
 
@@ -53,5 +85,7 @@ function remove() {
 module.exports = {
     index,
     list,
-    add
+    add,
+    formEdit,
+    edit
 }
